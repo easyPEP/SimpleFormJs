@@ -33,24 +33,26 @@ class ST.TranslationHelper
   _translatedPlaceholder: () ->
     idetifier = "#{@base.ressourceName.toLowerCase()}.#{@base.fieldName.toLowerCase()}"
     name = @translator("simple_form.placeholders.#{idetifier}")
-    name = undefined if name.match(idetifier)?
+    name = false if name? and name.match(idetifier)?
     name
 
   translatedHint: () ->
     idetifier = "#{@base.ressourceName.toLowerCase()}.#{@base.fieldName.toLowerCase()}"
     name = @translator("simple_form.hints.#{idetifier}")
-    name = undefined if name.match(idetifier)?
+    name = false if name.match(idetifier)?
     name
 
   translatedLabelName: () ->
     idetifier = "#{@base.ressourceName.toLowerCase()}.#{@base.fieldName.toLowerCase()}"
     # check first for simple_form namespace
     name = @translator("simple_form.labels.#{idetifier}")
-    if name.match(idetifier)?
+    if name? and name.match(idetifier)?
       name = @translator("activerecord.attributes.#{idetifier}")
       # check default translations
-      if name.match(idetifier)?
+      if name? and name.match(idetifier)?
         name = @base.fieldName
+    unless name
+      name = false
     name
 
 class ST.WrapperHelper
@@ -248,6 +250,7 @@ class ST.SimpleForm
       I18n.t
     else
       (identifier) -> identifier
+
 
   constructor: ({translator}={}) ->
     @_translatorFunction(translator)

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "collection_spec.js",
+  "sourceRoot": "",
+  "sources": [
+    "collection_spec.coffee"
+  ],
+  "names": [],
+  "mappings": "AAuCe;CAAA;CAAA"
+}

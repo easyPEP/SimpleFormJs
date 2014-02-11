@@ -59,8 +59,8 @@
 
       idetifier = "" + (this.base.ressourceName.toLowerCase()) + "." + (this.base.fieldName.toLowerCase());
       name = this.translator("simple_form.placeholders." + idetifier);
-      if (name.match(idetifier) != null) {
-        name = void 0;
+      if ((name != null) && (name.match(idetifier) != null)) {
+        name = false;
       }
       return name;
     };
@@ -71,7 +71,7 @@
       idetifier = "" + (this.base.ressourceName.toLowerCase()) + "." + (this.base.fieldName.toLowerCase());
       name = this.translator("simple_form.hints." + idetifier);
       if (name.match(idetifier) != null) {
-        name = void 0;
+        name = false;
       }
       return name;
     };
@@ -81,11 +81,14 @@
 
       idetifier = "" + (this.base.ressourceName.toLowerCase()) + "." + (this.base.fieldName.toLowerCase());
       name = this.translator("simple_form.labels." + idetifier);
-      if (name.match(idetifier) != null) {
+      if ((name != null) && (name.match(idetifier) != null)) {
         name = this.translator("activerecord.attributes." + idetifier);
-        if (name.match(idetifier) != null) {
+        if ((name != null) && (name.match(idetifier) != null)) {
           name = this.base.fieldName;
         }
+      }
+      if (!name) {
+        name = false;
       }
       return name;
     };

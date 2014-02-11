@@ -31,7 +31,9 @@ require [
   fixtures.path = './src/test/fixtures/'
 
   require [
-    './specs/definition_spec'
+    './specs/collection_spec'
+    './specs/wrapper_spec'
+    './specs/label_spec'
     './specs/controls_spec'
   ], ->
 

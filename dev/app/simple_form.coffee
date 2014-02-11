@@ -15,7 +15,7 @@ class ST.CollectionHelper
     unless @options.includeBlank is false
       converted.push
         value: ""
-        text: @options.includeBlank
+        text: if @options.includeBlank? then @options.includeBlank else ''
 
     _.each collection, (element) ->
       if _.isArray(element) and element.length is 2
@@ -147,7 +147,12 @@ class ST.ControlHelper
     console.log "not yet implemented"
 
   _inputControl: (type) ->
-    "<input type='#{type}' #{@inputMeta()} #{@inputValue()} >"
+    input = "<input type='#{type}'"
+    unless _.isEmpty(@inputMeta())
+      input += " #{@inputMeta()}"
+    unless _.isEmpty(@inputValue())
+      input += " #{@inputValue()}"
+    input += ">"
 
 class ST.DisplayHelper
 
@@ -229,7 +234,7 @@ class ST.SimpleForm
     range: 'input'
     radiobuttons: 'radiobuttons'
     checkboxes: 'checkboxes'
-    text: 'textarea'
+    text: 'textarea', textarea: 'textarea'
     datetime: 'select'
     date: 'select'
     time: 'select'
@@ -327,10 +332,20 @@ class ST.SimpleForm
     @options.inputClass = inputClassNames.join(" ")
 
   _includeBlankDefinition: (includeBlank) ->
-    unless includeBlank?
-      @options.includeBlank = switch @options.as
+    @options.includeBlank = if includeBlank? and _.isString(includeBlank)
+      includeBlank
+    else if includeBlank is true
+      true
+    else if includeBlank is false
+      false
+    else if _.isString(@options.as)
+      switch @options.as
         when 'radiobuttons'
           false
+        when 'checkboxes'
+          false
+    else
+      true
 
   # input( ressource, ressourceFieldName, {options})
   input: (ressource, ressourceFieldName, {model, collection, value, label, hint, as, required, placeholder, type, addonText, addonPosition, includeBlank, inputClass, wrapperClass}={}) ->

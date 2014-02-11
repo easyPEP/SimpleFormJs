@@ -2,22 +2,160 @@
 (function() {
   define(['jquery', 'js-fixtures'], function($, fixtures) {
     return describe("Controls", function() {
-      var simpleForm;
+      var $textControl, collection, simpleForm;
 
       simpleForm = null;
+      $textControl = null;
+      collection = ['male', 'female'];
       beforeEach(function() {
         return simpleForm = new ST.SimpleForm();
       });
       afterEach(function() {
         return fixtures.cleanUp();
       });
-      return it("shold render default text field", function() {
-        var input;
+      describe("test for input attributes", function() {
+        beforeEach(function() {
+          return $textControl = $(simpleForm.input('user', 'name')).find('input');
+        });
+        it("should be string input", function() {
+          return $textControl.attr('type').should.equal('string');
+        });
+        it("should have valid name attribute", function() {
+          return $textControl.attr('name').should.equal('user[name]');
+        });
+        it("should have valid class names", function() {
+          return $textControl.attr('class').should.equal('form-input form-control');
+        });
+        it("should have valid ID's", function() {
+          return $textControl.attr('id').should.equal('user_name');
+        });
+        it("should have valid placeholder", function() {
+          var $placeholderControl;
 
-        fixtures.load("controls.html");
-        console.log($(fixtures.body()).filter('.form-group'));
-        input = simpleForm.input('account', 'name');
-        return input.should.equal(fixtures.body());
+          $placeholderControl = $(simpleForm.input('user', 'name', {
+            placeholder: 'write your name'
+          })).find('input');
+          return $placeholderControl.attr('placeholder').should.equal('write your name');
+        });
+        it("should have valid value", function() {
+          var $placeholderControl;
+
+          $placeholderControl = $(simpleForm.input('user', 'name', {
+            value: 'kalle saas'
+          })).find('input');
+          return $placeholderControl.attr('value').should.equal('kalle saas');
+        });
+        return it("should have addition inputClass", function() {
+          var $placeholderControl;
+
+          $placeholderControl = $(simpleForm.input('user', 'name', {
+            inputClass: 'important'
+          })).find('input');
+          return $placeholderControl.hasClass('important').should.equal(true);
+        });
+      });
+      describe("collections and blank options", function() {
+        var $control, control;
+
+        control = null;
+        $control = null;
+        beforeEach(function() {
+          control = simpleForm.input('user', 'gender', {
+            collection: collection,
+            as: "select"
+          });
+          return $control = $(control).find('select');
+        });
+        it("should have a male/female including blank options", function() {
+          return $control.find('option').length.should.equal(3);
+        });
+        it("default blank should have no value", function() {
+          return $control.find('option:eq(0)').val().should.equal('');
+        });
+        it("default blank should have no text", function() {
+          return $control.find('option:eq(0)').text().should.equal('');
+        });
+        it("should not show an blank option", function() {
+          var blank;
+
+          blank = simpleForm.input('user', 'gender', {
+            includeBlank: false,
+            collection: collection,
+            as: "select"
+          });
+          $(blank).find('option:eq(0)').val().should.equal("male");
+          return $(blank).find('option:eq(0)').text().should.equal("male");
+        });
+        return it("should have a blank option with specific text", function() {
+          var blank;
+
+          blank = simpleForm.input('user', 'gender', {
+            includeBlank: 'please select a gender',
+            collection: collection,
+            as: "select"
+          });
+          $(blank).find('option:eq(0)').val().should.equal("");
+          return $(blank).find('option:eq(0)').text().should.equal("please select a gender");
+        });
+      });
+      return describe("control types", function() {
+        describe("<input type='*' /> controls", function() {
+          beforeEach(function() {
+            return $textControl = $(simpleForm.input('user', 'name')).find('input');
+          });
+          return it("should fallback to <input type='string' />", function() {
+            return $textControl.is("input").should.equal(true);
+          });
+        });
+        describe("<input type='radio' /> controls", function() {
+          var $control, control;
+
+          control = null;
+          $control = null;
+          beforeEach(function() {
+            control = simpleForm.input('user', 'gender', {
+              as: 'radiobuttons',
+              collection: collection
+            });
+            return $control = $(control).find('input');
+          });
+          it("should render as radio controls", function() {
+            return $control.attr('type').should.equal('radio');
+          });
+          return it("should by default not include blank options", function() {
+            return $control.length.should.equal(2);
+          });
+        });
+        describe("<textare /> controls", function() {
+          var $text, text;
+
+          $text = null;
+          text = null;
+          beforeEach(function() {
+            text = simpleForm.input('user', 'vitae‎', {
+              as: 'text'
+            });
+            return $text = $(text).find('textarea');
+          });
+          return it("should render a <textarea />", function() {
+            return $text.is("textarea").should.equal(true);
+          });
+        });
+        return describe("<select /> controls", function() {
+          var $control, control;
+
+          control = null;
+          $control = null;
+          beforeEach(function() {
+            control = simpleForm.input('user', 'gender', {
+              collection: collection
+            });
+            return $control = $(control).find('select');
+          });
+          return it("should fallback to be <select/> control", function() {
+            return $control.is("select").should.equal(true);
+          });
+        });
       });
     });
   });

@@ -28,7 +28,7 @@
       if (this.options.includeBlank !== false) {
         converted.push({
           value: "",
-          text: this.options.includeBlank
+          text: this.options.includeBlank != null ? this.options.includeBlank : ''
         });
       }
       _.each(collection, function(element) {
@@ -223,7 +223,16 @@
     };
 
     ControlHelper.prototype._inputControl = function(type) {
-      return "<input type='" + type + "' " + (this.inputMeta()) + " " + (this.inputValue()) + " >";
+      var input;
+
+      input = "<input type='" + type + "'";
+      if (!_.isEmpty(this.inputMeta())) {
+        input += " " + (this.inputMeta());
+      }
+      if (!_.isEmpty(this.inputValue())) {
+        input += " " + (this.inputValue());
+      }
+      return input += ">";
     };
 
     return ControlHelper;
@@ -327,6 +336,7 @@
       radiobuttons: 'radiobuttons',
       checkboxes: 'checkboxes',
       text: 'textarea',
+      textarea: 'textarea',
       datetime: 'select',
       date: 'select',
       time: 'select',
@@ -418,14 +428,24 @@
     };
 
     SimpleForm.prototype._includeBlankDefinition = function(includeBlank) {
-      if (includeBlank == null) {
-        return this.options.includeBlank = (function() {
+      return this.options.includeBlank = (function() {
+        if ((includeBlank != null) && _.isString(includeBlank)) {
+          return includeBlank;
+        } else if (includeBlank === true) {
+          return true;
+        } else if (includeBlank === false) {
+          return false;
+        } else if (_.isString(this.options.as)) {
           switch (this.options.as) {
             case 'radiobuttons':
               return false;
+            case 'checkboxes':
+              return false;
           }
-        }).call(this);
-      }
+        } else {
+          return true;
+        }
+      }).call(this);
     };
 
     SimpleForm.prototype.input = function(ressource, ressourceFieldName, _arg) {

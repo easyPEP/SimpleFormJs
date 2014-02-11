@@ -21,7 +21,7 @@
     chai.use(sinonChai);
     chai.should();
     fixtures.path = './src/test/fixtures/';
-    return require(['./specs/definition_spec', './specs/controls_spec'], function() {
+    return require(['./specs/collection_spec', './specs/wrapper_spec', './specs/label_spec', './specs/controls_spec'], function() {
       return mocha.run();
     });
   });
