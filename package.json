@@ -1,0 +1,21 @@
+{
+	"title": "SimpleFormJs",
+	"name": "SimpleFormJs",
+	"version": "0.0.1",
+	"author": "Juan G. Hurtado <juan.g.hurtado@gmail.com>",
+	"description": "Web development stack. With Backbone, Marionette, CoffeeScript, Mocha, Chai, Bower, Grunt…",
+	"repository": "https://github.com/juanghurtado/SimpleFormJs.git",
+	"devDependencies": {
+		"grunt" : "~0.4.0",
+		"grunt-contrib-clean" : "*",
+		"grunt-contrib-coffee" : "*",
+		"grunt-contrib-copy" : "*",
+		"grunt-contrib-connect" : "*",
+		"grunt-contrib-less" : "*",
+		"grunt-contrib-requirejs" : "*",
+		"grunt-contrib-watch" : "~0.4.0",
+		"grunt-coffeelint" : "*",
+		"grunt-mocha" : "*",
+		"grunt-smushit" : "*"
+	}
+}

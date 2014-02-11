@@ -1,0 +1,14 @@
+{
+  "name": "js-fixtures",
+  "_cacheHeaders": {
+    "ETag": "\"9f76a26147f1f0b905ecfbdc6d8eb4c1\"",
+    "Content-Length": "4688",
+    "Content-Type": "text/plain; charset=utf-8",
+    "Content-Disposition": "inline"
+  },
+  "_release": "e-tag:9f76a2614",
+  "main": "index.js",
+  "_source": "https://raw.github.com/badunk/js-fixtures/master/fixtures.js",
+  "_target": "*",
+  "_originalSource": "https://raw.github.com/badunk/js-fixtures/master/fixtures.js"
+}
