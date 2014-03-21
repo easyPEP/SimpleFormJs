@@ -1,4 +1,4 @@
-define ['jquery', 'js-fixtures'], ($, fixtures) ->
+define ['jquery', 'fixtures'], ($, fixtures) ->
 
   describe "Values", ->
     simpleForm = null

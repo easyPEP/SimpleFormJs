@@ -57,7 +57,7 @@ gulp.task('server', function(){
 
 //////////////////////////////////////////
 // TEST SETUP
-paths.specFiles = ["./src/test/**/*.coffee"]
+paths.specFiles = ["./src/test/specs/**/*.coffee"]
 paths.specMain = ["./src/test/main.coffee"]
 gulp.task('specs', function () {
   gulp.src(paths.specMain)

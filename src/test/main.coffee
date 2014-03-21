@@ -7,26 +7,21 @@ require.config
     'chai' : '/bower_components/chai/chai'
     'sinon-chai' : '/bower_components/sinon-chai/lib/sinon-chai'
     'sinon' : '/bower_components/sinon/index'
-    'js-fixtures' : '/bower_components/js-fixtures/index'
-    'expect' : '/bower_components/expect/expect'
+    'fixtures' : '/bower_components/fixtures/fixtures'
     'specs' : '/dist/test/specs'
-  #shim:
-  #  'backbone': ['jquery']
 
 require [
   'chai'
   'sinon-chai'
-  'sinon'
-  'js-fixtures'
-  'expect'
-  'js-fixtures'
+ 'fixtures'
+ 'sinon'
   'dependencies'
   'simple_form'
 ], (chai, sinonChai, fixtures) ->
   mocha.setup 'bdd'
   chai.use sinonChai
   chai.should()
-  fixtures.path = './dist/test/fixtures/'
+  fixtures.path = './src/test/fixtures/'
 
   require [
     './specs/value_spec'
@@ -37,10 +32,3 @@ require [
   ], ->
 
     mocha.run()
-
-# 'chai' : '/bower_components/chai/chai'
-# 'sinon-chai' : '/bower_components/sinon-chai/lib/sinon-chai'
-# 'sinon' : '/bower_components/sinon/index'
-# 'expect' : '/bower_components/expect/expect'
-# 'js-fixtures' : '/bower_components/js-fixtures/index'
-# 'specs' : '/dev/test/specs'

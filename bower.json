@@ -13,6 +13,6 @@
     "mocha": "~1.15.1",
     "sinon": "http://sinonjs.org/releases/sinon-1.7.3.js",
     "sinon-chai": "~2.4.0",
-    "js-fixtures": "https://raw.github.com/badunk/js-fixtures/master/fixtures.js"
+    "fixtures": "~1.3.1"
   }
 }
