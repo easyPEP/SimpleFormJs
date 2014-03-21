@@ -1,9 +1,10 @@
 require.config
-  baseUrl: './src/app'
+  baseUrl: './dev/app'
   paths:
     'text': '/bower_components/requirejs-text/text'
     'jquery': '/bower_components/jquery/jquery'
     'underscore': '/bower_components/underscore-amd/underscore'
+
     'prism': '/bower_components/prism/prism'
     'coffeescript': '/bower_components/prism/components/prism-coffeescript.min'
     'simple_form': './simple_form'

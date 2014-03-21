@@ -1,1 +1,9 @@
-./bower_components/*
+*.sassc
+.sass-cache
+dist/**/**
+!dist/job.js
+!dist/dependencies.js
+bower_components
+bower_components/*
+node_modules
+node_modules/*

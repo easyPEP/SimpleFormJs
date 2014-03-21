@@ -5,16 +5,14 @@
     "requirejs": "~2.1.9",
     "requirejs-text": "~2.0.10",
     "jquery": "~1.10.2",
-    "underscore-amd": "~1.5.2",
+    "underscore": "~1.6.0",
     "bootstrap": "~3.1.0",
+    "backbone": "~1.1.0",
+    "expect": "~0.2.0",
     "chai": "~1.8.1",
     "mocha": "~1.15.1",
-    "expect": "~0.2.0",
     "sinon": "http://sinonjs.org/releases/sinon-1.7.3.js",
     "sinon-chai": "~2.4.0",
     "js-fixtures": "https://raw.github.com/badunk/js-fixtures/master/fixtures.js"
-  },
-  "devDependencies": {
-    "prism": "git@github.com:LeaVerou/prism.git#gh-pages"
   }
 }
