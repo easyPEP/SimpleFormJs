@@ -1,4 +1,4 @@
-// Stuff to fix after running bower install:
+//
 
 var gulp         = require('gulp'),
     gutil        = require('gulp-util'),
@@ -34,8 +34,7 @@ gulp.task('javascripts', function() {
 });
 
 paths.coffeescripts = [
-  './src/simple_form.coffee',
-  './src/test/**/**.coffee',
+  './src/simple_form.coffee'
 ]
 
 gulp.task('coffeescripts', function() {
@@ -63,8 +62,8 @@ paths.specMain = ["./src/test/main.coffee"]
 gulp.task('specs', function () {
   gulp.src(paths.specMain)
     .pipe(coffee({bare: true}).on('error', gutil.log))
-    .pipe(gulp.dest('./dist/test'))
-    .pipe(notify({ message: 'Scripts task complete' }));
+      .pipe(gulp.dest('./dist/test'))
+        .pipe(notify({ message: 'Scripts task complete' }));
 
   return gulp.src(paths.specFiles)
           .pipe(coffee({bare: true}).on('error', gutil.log))

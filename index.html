@@ -6,47 +6,49 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width">
   <title>SimpleForm.js</title>
+  <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="./docs/stylesheets/docs.css">
 </head>
 
 <body>
 
-  <div id="sidebar" class="interface">
+<div class="container">
+  <div class="row">
+    <div id="sidebar" class="hidden-xs col-sm-3 col-md-3">
 
-    <a class="toc_title" href="/">
-      SimpleForm.js <span class="version">(0.0.1)</span>
-    </a>
-    <ul class="toc_section">
-      <li>» <a href="https://github.com/easyPEP/SimpleFormJs" target="_new">GitHub Repository</a></li>
-    </ul>
+<a class="toc_title" href="/">
+  SimpleForm.js <span class="version">(0.0.1)</span>
+</a>
+<ul class="list-unstyled toc_section">
+  <li>» <a href="https://github.com/easyPEP/SimpleFormJs" target="_new">GitHub Repository</a></li>
+</ul>
 
-    <a class="toc_title" href="#introduction">
-      Introduction
-    </a>
+<a class="toc_title" href="#introduction">
+  Introduction
+</a>
 
-    <a class="toc_title" href="#UrlHelper">
-      SimpleFormJs.Lib.UrlHelper
-    </a>
+<a class="toc_title" href="#UrlHelper">
+  ST.SimpleForm
+</a>
 
-    <ul class="toc_section">
-      <li>– <a href="#Form-linkTo">linkTo</a></li>
-    </ul>
+<ul class="toc_section list-unstyled">
+  <li>– <a href="#SimpleForm-input">input</a></li>
+</ul>
 
-    <a class="toc_title" href="#changelog">
-      Change Log
-    </a>
+<a class="toc_title" href="#changelog">
+  Change Log
+</a>
 
-  </div>
+    </div>
+    <div class="col-xs-12 col-sm-8 col-md-8 col-sm-offset-3 col-md-offset-3" id="content">
 
-  <div class="container">
+<h1 class="project-name"> - SimpleForm<small>.js</small> - </h1>
 
-    <h1 class="project-name"> - SimpleForm<small>.js</small> - </h1>
+<h2 id="introduction">Introduction</h2>
 
-    <h2 id="introduction">Introduction</h2>
-
-    <p>
-      Javascript FormBuilder for <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://easypep.github.io/JoB/">JoB.js</a></b> inspired by <a href="https://github.com/plataformatec/simple_form">simple_form</a>.
-    </p>
+<p>
+  Javascript FormBuilder for <a href="http://getbootstrap.com/">Bootstrap</a> and <a href="http://easypep.github.io/JoB/">JoB.js</a></b> inspired by <a href="https://github.com/plataformatec/simple_form">simple_form</a>.
+</p>
 
 <!--
   ////////////////////////////////////
@@ -54,38 +56,39 @@
   SimpleFormJs.Lib.UrlHelper
 -->
 
-<h2 id="UrlHelper">SimpleFormJs.Lib.UrlHelper Setup</h2>
+<h2 id="UrlHelper">ST.SimpleForm Setup</h2>
 
 <p>
   Make the helper available:
 </p>
 
 <pre>
-window.urlHelper = new SimpleFormJs.Lib.UrlHelper()
+window.simpleForm = new ST.SimpleForm()
 </pre>
 
 <!-- EXAMPLE -->
-<p id="Form-linkTo">
-  <b class="header">linkTo</b><code>helper.linkTo(body, url, htmlOptions = {})</code>
+<p id="SimpleForm-input">
+  <b class="header">input</b><code>helper.input(ressource, fieldName, [options])</code>
   <br>
   Creates a <b>button</b> element that defines a submit button.
 </p>
 <pre class="runnable">
-urlHelper.linkTo("google.com", "https://www.google.de/",
-  {target: '_new'}
-);
+simpleForm.input('users', 'name', {placeholder: 'User Name'});
 </pre>
 
-
+    </div>
+  </div>
 </div>
 
 <!-- JAVASCRIPT -->
 <script src="./dist/dependencies.js"></script>
-<script src="./dist/job.js"></script>
+<script src="./dist/simple_form.js"></script>
 
 <script>
   // Set up the "play" buttons for each runnable code example.
   $(function() {
+    window.simpleForm = new ST.SimpleForm()
+
     $('.runnable').each(function() {
       var code = this;
       var button   = '<div class="run" title="Run"></div>';
