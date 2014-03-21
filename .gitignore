@@ -1,7 +1,7 @@
 *.sassc
 .sass-cache
 dist/**/**
-!dist/job.js
+!dist/simple_form.js
 !dist/dependencies.js
 bower_components
 bower_components/*
