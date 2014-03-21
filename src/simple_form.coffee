@@ -5,6 +5,7 @@ class ST.Error.Arguments extends Error
   constructor: (argument) ->
     throw new Error("#{argument} not provided")
 
+# TODO: use JoB.Form.OptionsHelper instead
 class ST.CollectionHelper
 
   collectionParser: (collection) ->
@@ -55,6 +56,7 @@ class ST.TranslationHelper
       name = false
     name
 
+
 class ST.WrapperHelper
 
   # Base Wrapper
@@ -95,7 +97,7 @@ class ST.WrapperHelper
     html += "</div>"
     html
 
-# All about Attributes related methods
+# TODO: use JoB.Form.TagHelper instead
 class ST.MetaHelper
 
   inputValue: () ->
@@ -135,6 +137,7 @@ class ST.MetaHelper
   inputAddon: (text) ->
     "<span class='input-group-addon'>#{text}</span>"
 
+# TODO: use JoB.Form.TagHelper instead
 class ST.ControlHelper
 
   _selectControl: () ->
@@ -156,6 +159,7 @@ class ST.ControlHelper
       input += " #{@inputValue()}"
     input += ">"
 
+# TODO: use JoB.Form.TagHelper instead
 class ST.DisplayHelper
 
   button: (text) ->
