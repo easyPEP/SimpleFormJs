@@ -28,8 +28,8 @@ define ['jquery', 'fixtures'], ($, fixtures) ->
       trans
 
     beforeEach ->
-      simpleForm = new ST.SimpleForm()
-      translatedSimpleForm = new ST.SimpleForm(translator: translator)
+      simpleForm = new JoB.SimpleForm.Base()
+      translatedSimpleForm = new JoB.SimpleForm.Base(translator: translator)
 
     afterEach ->
       fixtures.cleanUp()

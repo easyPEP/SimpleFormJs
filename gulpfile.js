@@ -23,7 +23,8 @@ var gulp         = require('gulp'),
 paths.javascripts = [
   './bower_components/jquery/jquery.js',
   './bower_components/underscore/underscore.js',
-  './bower_components/backbone/backbone.js'
+  './bower_components/backbone/backbone.js',
+  './bower_components/JoB/dist/job.js'
 ]
 
 gulp.task('javascripts', function() {
@@ -34,13 +35,16 @@ gulp.task('javascripts', function() {
 });
 
 paths.coffeescripts = [
-  './src/simple_form.coffee'
+  './src/simple_form.coffee',
+  './src/lib/translation_helper.coffee',
+  './src/lib/wrapper_helper.coffee'
 ]
 
 gulp.task('coffeescripts', function() {
   return gulp.src(paths.coffeescripts)
     .pipe(concat('simple_form.coffee'))
-    .pipe(coffee({bare: true}).on('error', gutil.log))
+    .pipe(gulp.dest('./dist/')) // make the source available
+    .pipe(coffee({bare: true, sourceMap: true}).on('error', gutil.log))
     .pipe(gulp.dest('./dist/'))
     .pipe(notify({ message: 'coffeescripts task complete' }));
 });

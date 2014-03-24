@@ -11,7 +11,7 @@ define ['jquery', 'fixtures'], ($, fixtures) ->
       simpleForm.input(options.ressource, options.method, options)
 
     beforeEach ->
-      simpleForm = new ST.SimpleForm()
+      simpleForm = new JoB.SimpleForm.Base()
 
     afterEach ->
       fixtures.cleanUp()

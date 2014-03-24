@@ -1,88 +1,306 @@
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+if (window.JoB === void 0) {
+  window.JoB = {};
+}
 
-window.ST = {};
+if (JoB.SimpleForm === void 0) {
+  window.JoB.SimpleForm = {};
+}
 
-ST.Error = {};
+JoB.SimpleForm.Base = (function() {
+  var INPUT_MAPPING;
 
-ST.Error.Arguments = (function(_super) {
-  __extends(Arguments, _super);
-
-  function Arguments(argument) {
-    throw new Error("" + argument + " not provided");
-  }
-
-  return Arguments;
-
-})(Error);
-
-ST.CollectionHelper = (function() {
-  function CollectionHelper() {}
-
-  CollectionHelper.prototype.collectionParser = function(collection) {
-    var converted;
-    converted = [];
-    if (this.options.includeBlank !== false) {
-      converted.push({
-        value: "",
-        text: this.options.includeBlank != null ? this.options.includeBlank : ''
-      });
-    }
-    _.each(collection, function(element) {
-      if (_.isArray(element) && element.length === 2) {
-        return converted.push({
-          value: element[0],
-          text: element[1]
-        });
-      } else if (_.isBoolean(element) || _.isString(element)) {
-        return converted.push({
-          value: element,
-          text: element
-        });
-      }
-    });
-    return converted;
+  INPUT_MAPPING = {
+    boolean: 'checkBoxTag',
+    checkboxes: 'checkBoxTag',
+    datetime: 'datetimeFieldTag',
+    date: 'dateFieldTag',
+    decimal: 'input',
+    email: 'emailFieldTag',
+    file: 'fileFieldTag',
+    float: 'input',
+    hidden: 'hiddenFieldTag',
+    integer: 'input',
+    select: 'selectTag',
+    string: 'textFieldTag',
+    tel: 'telephoneFieldTag',
+    password: 'passwordFieldTag',
+    radiobuttons: 'radioButtonTag',
+    range: 'rangeFieldTag',
+    search: 'searchFieldTag',
+    text: 'textAreaTag',
+    textarea: 'textAreaTag',
+    time: 'timeFieldTag',
+    url: 'urlFieldTag'
   };
 
-  return CollectionHelper;
+  function Base(argument) {
+    this.optionsHelper = new JoB.Form.OptionsHelper();
+    this.tagHelper = new JoB.Form.TagHelper();
+  }
+
+  Base.prototype._ressoureDefinition = function() {
+    if (_.isString(this.base.ressource)) {
+      this.base.ressourceName = this.base.ressource;
+      return this.base.ressource = false;
+    } else if (_.isObject(this.base.ressource)) {
+      if (this.base.ressource.modelName != null) {
+        this.base.ressourceName = this.base.ressource.modelName;
+      } else if (this.base.ressource.className != null) {
+        this.base.ressourceName = this.base.ressource.className;
+      } else {
+        console.log("We could not guess ressourceName, please add modelName or className to the ressource option");
+      }
+      if (_.isFunction(this.base.ressource.toJSON)) {
+        return this.base.ressource = this.base.ressource.toJSON();
+      } else {
+        return this.base.ressource = this.base.ressource;
+      }
+    }
+  };
+
+  Base.prototype._value = function() {
+    var returnString;
+    returnString = "";
+    if (this.options.value === false) {
+      returnString = '';
+    } else if (_.isString(this.options.value) && _.isEmpty(this.options.value) === false) {
+      returnString = this.options.value;
+    } else if (this.base.ressource && _.isString(this.base.ressource[this.base.fieldName])) {
+      returnString = this.base.ressource[this.base.fieldName];
+    }
+    return returnString;
+  };
+
+  Base.prototype._placeholder = function() {
+    var returnString, translatedPlaceholder;
+    returnString = '';
+    if (this.options.placeholder === false) {
+      returnString = '';
+    } else if (_.isString(this.options.placeholder) && _.isEmpty(this.options.placeholder) === false) {
+      returnString = this.options.placeholder;
+    } else {
+      translatedPlaceholder = this.translationHelper.placeholder();
+      if (translatedPlaceholder != null) {
+        returnString = translatedPlaceholder;
+      } else {
+        returnString = '';
+      }
+    }
+    return returnString;
+  };
+
+  Base.prototype._inputType = function() {
+    var type;
+    type = '';
+    if ((this.options.collection != null) && this.options.as === 'string') {
+      type = INPUT_MAPPING['select'];
+    } else if (_.isString(this.options.as) && _.isString(INPUT_MAPPING["" + this.options.as])) {
+      type = INPUT_MAPPING["" + this.options.as];
+    } else {
+      type = INPUT_MAPPING['string'];
+    }
+    return type;
+  };
+
+  Base.prototype._selectedOptionTag = function() {
+    var selected;
+    selected = void 0;
+    if (this.base.ressource && this.options.collection) {
+      selected = _.find(this.options.collection, (function(_this) {
+        return function(el) {
+          return el[0] === _this.base.ressource[_this.base.fieldName];
+        };
+      })(this));
+    }
+    return selected;
+  };
+
+  Base.prototype._collection = function() {
+    var collection;
+    collection = this.options.collection;
+    if (this.options.includeBlank || _.isEmpty(this.options.includeBlank) === false) {
+      if (_.isString(this.options.includeBlank)) {
+        collection.unshift(["", this.options.includeBlank]);
+      } else {
+        collection.unshift(["", ""]);
+      }
+    }
+    return collection;
+  };
+
+  Base.prototype._optionTags = function() {
+    return this.optionsHelper.optionsForSelect(this._collection(), this._selectedOptionTag());
+  };
+
+  Base.prototype._radioOrCheckTags = function(inputType) {
+    var els, ressource;
+    els = [];
+    ressource = this.base.ressource;
+    _.each(this.options.collection, (function(_this) {
+      return function(option) {
+        var checked, inputOptions, inputTag, withWrapper;
+        checked = ressource && ressource[_this.base.fieldName] === option[0] ? true : false;
+        inputOptions = _.clone(_this.inputOptions);
+        inputOptions.value = option[0];
+        if (inputType === INPUT_MAPPING['radiobuttons']) {
+          inputTag = _this.tagHelper.radioButtonTag(_this.base.ressourceName, _this.base.fieldName, checked, inputOptions);
+          withWrapper = _this.wrapperHelper.radiobutton(inputTag, option[1]);
+        } else {
+          inputTag = _this.tagHelper.checkBoxTag(_this.base.ressourceName, _this.base.fieldName, checked, inputOptions);
+          withWrapper = _this.wrapperHelper.checkbox(inputTag, option[1]);
+        }
+        return els.push(withWrapper);
+      };
+    })(this));
+    return els;
+  };
+
+  Base.prototype.inputWithWrapper = function() {
+    var checked, content, inputHtml, inputType, inputWithWrapper, label;
+    inputType = this._inputType();
+    inputWithWrapper = '';
+    if (inputType === INPUT_MAPPING['select']) {
+      this.inputOptions['class'] += " form-control";
+      inputHtml = this.tagHelper.selectTag(this.base.ressourceName, this.base.fieldName, this._optionTags(), this.inputOptions);
+      inputWithWrapper = this.wrapperHelper["default"](inputHtml);
+    } else if (this.options.as === 'boolean') {
+      checked = this.base.ressource && this.base.ressource[this.base.fieldName] === 1 ? true : false;
+      this.inputOptions.value = 1;
+      inputHtml = this.tagHelper.checkBoxTag(this.base.ressourceName, this.base.fieldName, checked, this.inputOptions);
+      label = this.wrapperHelper._label();
+      inputWithWrapper = this.wrapperHelper.checkbox(inputHtml, label);
+    } else if (inputType === INPUT_MAPPING['checkboxes'] || inputType === INPUT_MAPPING['radiobuttons']) {
+      inputWithWrapper = this._radioOrCheckTags(inputType).join("");
+    } else if (inputType === INPUT_MAPPING['file']) {
+      inputHtml = this.tagHelper[inputType](this.base.ressourceName, this.base.fieldName, this.inputOptions);
+      inputWithWrapper = this.wrapperHelper["default"](inputHtml);
+    } else if (inputType === INPUT_MAPPING['text'] || inputType === INPUT_MAPPING['textarea']) {
+      content = this.inputOptions.value;
+      delete this.inputOptions.value;
+      this.inputOptions['class'] += " form-control";
+      inputHtml = this.tagHelper.textAreaTag(this.base.ressourceName, this.base.fieldName, content, this.inputOptions);
+      inputWithWrapper = this.wrapperHelper["default"](inputHtml);
+    } else {
+      if (inputType === INPUT_MAPPING['range']) {
+        this.inputOptions['class'] += "";
+      } else if (inputType === INPUT_MAPPING['hidden']) {
+        this.options.label = false;
+      } else {
+        this.inputOptions['class'] += " form-control";
+      }
+      inputHtml = this.tagHelper["" + (this._inputType())](this.base.ressourceName, this.base.fieldName, this.inputOptions);
+      inputWithWrapper = this.wrapperHelper["default"](inputHtml);
+    }
+    return inputWithWrapper;
+  };
+
+  Base.prototype.input = function(ressource, fieldName, options, inputOptions, labelOptions, wrapperOptions) {
+    if (options == null) {
+      options = {};
+    }
+    if (inputOptions == null) {
+      inputOptions = {};
+    }
+    if (labelOptions == null) {
+      labelOptions = {};
+    }
+    if (wrapperOptions == null) {
+      wrapperOptions = {};
+    }
+    this.base = {
+      fieldName: fieldName,
+      ressource: ressource
+    };
+    this._ressoureDefinition();
+    this.translationHelper = new JoB.SimpleForm.TranslationHelper(this.base);
+    this.options = _.defaults(options, {
+      as: 'string',
+      type: 'text',
+      label: true,
+      value: true,
+      required: false,
+      addonText: false,
+      addonPosition: 'right',
+      includeBlank: true
+    });
+    this.inputOptions = _.defaults(inputOptions, {
+      "class": '',
+      value: this._value(),
+      placeholder: this._placeholder()
+    });
+    this.labelOptions = _.defaults(labelOptions, {});
+    this.wrapperOptions = _.defaults(wrapperOptions, {
+      "class": 'form-group'
+    });
+    this.wrapperHelper = new JoB.SimpleForm.WrapperHelper(this.base, this.options, this.labelOptions, this.wrapperOptions);
+    return this.inputWithWrapper();
+  };
+
+  Base.prototype.button = function(text, htmlOptions) {
+    var options;
+    if (htmlOptions == null) {
+      htmlOptions = {};
+    }
+    options = _.defaults(htmlOptions, {
+      "class": "btn btn-default"
+    });
+    return this.tagHelper.buttonTag(text, options);
+  };
+
+  return Base;
 
 })();
 
-ST.TranslationHelper = (function() {
-  function TranslationHelper() {}
+if (window.JoB === void 0) {
+  window.JoB = {};
+}
 
-  TranslationHelper.prototype._translatedPlaceholder = function() {
-    var idetifier, name;
-    idetifier = "" + (this.base.ressourceName.toLowerCase()) + "." + (this.base.fieldName.toLowerCase());
-    name = this.translator("simple_form.placeholders." + idetifier);
-    if ((name != null) && (name.match(idetifier) != null)) {
+if (JoB.SimpleForm === void 0) {
+  window.JoB.SimpleForm = {};
+}
+
+JoB.SimpleForm.TranslationHelper = (function() {
+  function TranslationHelper(base, _arg) {
+    var hint, placeholder, translator, _ref;
+    _ref = _arg != null ? _arg : {}, placeholder = _ref.placeholder, hint = _ref.hint, translator = _ref.translator;
+    this.base = base;
+    this.idetifier = "" + (this.base.ressourceName.toLowerCase()) + "." + (this.base.fieldName.toLowerCase());
+    this.placeholderN = placeholder || 'simple_form.placeholders';
+    this.hintN = hint || 'simple_form.hints';
+    this.translator = (translator != null) && _.isFunction(translator) ? translator : typeof I18n !== "undefined" && I18n !== null ? (function(_this) {
+      return function(identifier) {
+        return I18n.t(identifier);
+      };
+    })(this) : function(identifier) {
+      return identifier;
+    };
+  }
+
+  TranslationHelper.prototype._base = function(namespace) {
+    var name;
+    name = this.translator("" + namespace + "." + this.idetifier);
+    if ((name != null) && (name.match(this.idetifier) != null)) {
       name = false;
     }
     return name;
   };
 
-  TranslationHelper.prototype.translatedHint = function() {
-    var idetifier, name;
-    idetifier = "" + (this.base.ressourceName.toLowerCase()) + "." + (this.base.fieldName.toLowerCase());
-    name = this.translator("simple_form.hints." + idetifier);
-    if (name.match(idetifier) != null) {
-      name = false;
-    }
-    return name;
+  TranslationHelper.prototype.placeholder = function() {
+    return this._base(this.placeholderN);
   };
 
-  TranslationHelper.prototype.translatedLabelName = function() {
-    var idetifier, name;
-    idetifier = "" + (this.base.ressourceName.toLowerCase()) + "." + (this.base.fieldName.toLowerCase());
-    name = this.translator("simple_form.labels." + idetifier);
-    if ((name != null) && (name.match(idetifier) != null)) {
-      name = this.translator("activerecord.attributes." + idetifier);
-      if ((name != null) && (name.match(idetifier) != null)) {
-        name = this.base.fieldName;
-      }
+  TranslationHelper.prototype.hint = function() {
+    return this._base(this.hintN);
+  };
+
+  TranslationHelper.prototype.label = function() {
+    var name;
+    name = this._base('simple_form.labels');
+    if (name === false) {
+      name = this._base('activerecord.attributes');
     }
-    if (!name) {
-      name = false;
+    if (name === false) {
+      name = this.base.fieldName;
     }
     return name;
   };
@@ -91,48 +309,102 @@ ST.TranslationHelper = (function() {
 
 })();
 
-ST.WrapperHelper = (function() {
-  function WrapperHelper() {}
+if (window.JoB === void 0) {
+  window.JoB = {};
+}
 
-  WrapperHelper.prototype.wrapper = function(inputHtml) {
+if (JoB.SimpleForm === void 0) {
+  window.JoB.SimpleForm = {};
+}
+
+JoB.SimpleForm.WrapperHelper = (function() {
+  function WrapperHelper(base, simpleFormOptions, labelOptions, wrapperOptions) {
+    this.base = base;
+    this.simpleFormOptions = simpleFormOptions;
+    this.labelOptions = labelOptions;
+    this.options = _.defaults(wrapperOptions, {
+      "class": 'form-group',
+      addonText: false,
+      addonPosition: 'left'
+    });
+    this.formTagHelper = new JoB.Form.TagHelper();
+    this.tagHelper = new JoB.Lib.Tag();
+    this.translationHelper = new JoB.SimpleForm.TranslationHelper(this.base);
+  }
+
+  WrapperHelper.prototype._labelText = function(label) {
+    var text;
+    text = "";
+    if (_.isString(label)) {
+      text = label;
+    } else {
+      text = this.translationHelper.label();
+    }
+    return text;
+  };
+
+  WrapperHelper.prototype._label = function() {
+    if (this.simpleFormOptions.label === false) {
+      return "";
+    } else {
+      return this.formTagHelper.labelTag(this.base.ressourceName, this.base.fieldName, this._labelText(this.simpleFormOptions.label), this.labelOptions);
+    }
+  };
+
+  WrapperHelper.prototype._hint = function(text) {
+    return this.tagHelper.contentTag('span', text, {
+      "class": 'help-block'
+    });
+  };
+
+  WrapperHelper.prototype._addon = function(addonText) {
+    return this.tagHelper.contentTag('span', addonText, {
+      "class": 'input-group-addon'
+    });
+  };
+
+  WrapperHelper.prototype["default"] = function(inputHtml) {
     var html;
     html = "";
-    html += "<div class='" + this.options.wrapperClass + "'>";
+    html += "<div class='" + this.options["class"] + "'>";
     if (this.options.addonText === false) {
-      html += this.label();
+      html += this._label(this.simpleFormOptions.label);
       html += inputHtml;
     } else {
-      html += this.label();
+      html += this._label(this.simpleFormOptions.label);
       html += "<div class='input-group'>";
       if (this.options.addonPosition === 'left') {
         html += this.inputHtmlAddon(this.options.addonText);
         html += inputHtml;
       } else {
         html += inputHtml;
-        html += this.inputAddon(this.options.addonText);
+        html += this._addon(this.options.addonText);
       }
       html += '</div>';
     }
-    html += this.hint();
+    if (_.isEmpty("" + this.simpleFormOptions.hint) === !true) {
+      html += this._hint(this.simpleFormOptions.hint);
+    }
     html += '</div>';
     return html;
   };
 
-  WrapperHelper.prototype.checkboxesWrapper = function(inputHtml) {
-    var html;
-    html = "<div class='" + this.options.wrapperClass + "'>";
-    html += "<div class='checkbox'> <label> " + inputHtml + " " + this.options.label + "</label> </div>";
-    html += "</div>";
-    return html;
+  WrapperHelper.prototype.checkbox = function(inputTag, labelText) {
+    return "<div class='checkbox'><label>" + inputTag + labelText + "</label></div>";
   };
 
-  WrapperHelper.prototype.radiobuttonsWrapper = function(inputs) {
+  WrapperHelper.prototype.radiobutton = function(inputTag, labelText) {
+    return "<div class='radio'><label>" + inputTag + labelText + "</label></div>";
+  };
+
+  WrapperHelper.prototype.radiobuttons = function(inputs) {
     var html;
-    html = "<div class='" + this.options.wrapperClass + "'>";
-    _.each(inputs, function(el) {
-      return html += "<div class='radio'><label>" + el[0] + " " + el[1] + "</label></div>";
-    });
-    html += "</div>";
+    html = "";
+    _.each(inputs, (function(_this) {
+      return function(input) {
+        return html += _this.radiobutton(input, "");
+      };
+    })(this));
     return html;
   };
 
@@ -140,336 +412,6 @@ ST.WrapperHelper = (function() {
 
 })();
 
-ST.MetaHelper = (function() {
-  function MetaHelper() {}
-
-  MetaHelper.prototype.inputValue = function() {
-    var val;
-    val = this.options.value === false || this.options.value === 'undefined' ? "" : this.options.as === 'text' ? this.options.value : 'text' ? "value='" + this.options.value + "'" : void 0;
-    return val;
-  };
-
-  MetaHelper.prototype.checked = function(comparerator) {
-    if (comparerator || comparerator === 'true') {
-      return 'checked';
-    }
-  };
-
-  MetaHelper.prototype.selected = function(selected, range) {
-    if ((selected != null) && (range != null) && _.isArray(range)) {
-      if (_.contains(range, selected)) {
-        return 'selected=selected';
-      }
-    } else if (_.isBoolean(selected)) {
-      if (selected) {
-        return 'selected=selected';
-      }
-    }
-  };
-
-  MetaHelper.prototype.inputId = function() {
-    return "" + (this.base.ressourceName.toLowerCase()) + "_" + (this.base.fieldName.toLowerCase());
-  };
-
-  MetaHelper.prototype.inputName = function() {
-    return "" + (this.base.ressourceName.toLowerCase()) + "[" + (this.base.fieldName.toLowerCase()) + "]";
-  };
-
-  MetaHelper.prototype.inputMeta = function() {
-    var string;
-    string = "class='" + this.options.inputClass + "'";
-    string += "name='" + (this.inputName()) + "' ";
-    string += "id='" + (this.inputId()) + "' ";
-    if (this.options.placeholder !== false) {
-      string += "placeholder='" + this.options.placeholder + "' ";
-    }
-    return string;
-  };
-
-  MetaHelper.prototype.inputAddon = function(text) {
-    return "<span class='input-group-addon'>" + text + "</span>";
-  };
-
-  return MetaHelper;
-
-})();
-
-ST.ControlHelper = (function() {
-  function ControlHelper() {}
-
-  ControlHelper.prototype._selectControl = function() {
-    var collection, input;
-    collection = this.options.collection;
-    input = "";
-    input += "<select " + (this.inputMeta()) + " >";
-    _.each(this.options.collection, (function(_this) {
-      return function(option) {
-        return input += "<option " + (_this.selected(option.value === _this.options.value)) + " value='" + option.value + "'>" + option.text + "</option>";
-      };
-    })(this));
-    return input += "</select>";
-  };
-
-  ControlHelper.prototype._booleanControl = function() {
-    return console.log("not yet implemented");
-  };
-
-  ControlHelper.prototype._inputControl = function(type) {
-    var input;
-    input = "<input type='" + type + "'";
-    if (!_.isEmpty(this.inputMeta())) {
-      input += " " + (this.inputMeta());
-    }
-    if (!_.isEmpty(this.inputValue())) {
-      input += " " + (this.inputValue());
-    }
-    return input += ">";
-  };
-
-  return ControlHelper;
-
-})();
-
-ST.DisplayHelper = (function() {
-  function DisplayHelper() {}
-
-  DisplayHelper.prototype.button = function(text) {
-    var html;
-    html = "<div class='" + this.options.wrapperClass + "'>";
-    html += "<button type='submit' class='btn btn-default'>" + text + "</button>";
-    html += "</div>";
-    return html;
-  };
-
-  DisplayHelper.prototype.inputInput = function() {
-    return this.wrapper(this._inputControl(this.options.as));
-  };
-
-  DisplayHelper.prototype.textareaInput = function() {
-    var input;
-    input = "<textarea " + (this.inputMeta()) + ">" + (this.inputValue()) + "</textarea>";
-    return this.wrapper(input);
-  };
-
-  DisplayHelper.prototype.checkboxesInput = function() {
-    var input;
-    input = "<input " + (this.inputMeta()) + " type='checkbox' " + (this.inputValue()) + ">";
-    return this["" + this.options.typeName + "Wrapper"](input);
-  };
-
-  DisplayHelper.prototype.radiobuttonsInput = function() {
-    var els;
-    els = [];
-    _.each(this.options.collection, (function(_this) {
-      return function(option) {
-        return els.push(["<input type='radio' " + (_this.inputMeta()) + " value='" + option.value + "'>", option.text]);
-      };
-    })(this));
-    return this["" + this.options.typeName + "Wrapper"](els);
-  };
-
-  DisplayHelper.prototype.fileInput = function() {
-    var input;
-    input = "<input type='" + this.options.type + "' " + (this.inputMeta()) + ">";
-    return this.wrapper(input);
-  };
-
-  DisplayHelper.prototype.selectInput = function() {
-    var input;
-    input = this._selectControl();
-    return this.wrapper(input);
-  };
-
-  DisplayHelper.prototype.label = function() {
-    if (this.options.label === false) {
-      return "";
-    } else {
-      return "<label for='" + (this.inputId()) + "'>" + this.options.label + "</label>";
-    }
-  };
-
-  DisplayHelper.prototype.hint = function() {
-    if (this.options.hint === false) {
-      return "";
-    } else {
-      return "<span class='help-block'>" + this.options.hint + "</span>";
-    }
-  };
-
-  return DisplayHelper;
-
-})();
-
-ST.SimpleForm = (function() {
-  var INPUT_MAPPING;
-
-  _.extend(SimpleForm.prototype, ST.TranslationHelper.prototype, ST.CollectionHelper.prototype, ST.DisplayHelper.prototype, ST.WrapperHelper.prototype, ST.MetaHelper.prototype, ST.ControlHelper.prototype);
-
-  INPUT_MAPPING = {
-    boolean: 'input',
-    string: 'input',
-    email: 'input',
-    url: 'input',
-    tel: 'input',
-    password: 'input',
-    search: 'input',
-    file: 'input',
-    hidden: 'input',
-    integer: 'input',
-    float: 'input',
-    decimal: 'input',
-    range: 'input',
-    radiobuttons: 'radiobuttons',
-    checkboxes: 'checkboxes',
-    text: 'textarea',
-    textarea: 'textarea',
-    datetime: 'select',
-    date: 'select',
-    time: 'select',
-    select: 'select'
-  };
-
-  SimpleForm.prototype._translatorFunction = function(translator) {
-    return this.translator = translator != null ? translator : typeof I18n !== "undefined" && I18n !== null ? (function(_this) {
-      return function(identifier) {
-        return I18n.t(identifier);
-      };
-    })(this) : function(identifier) {
-      return identifier;
-    };
-  };
-
-  function SimpleForm(_arg) {
-    var translator;
-    translator = (_arg != null ? _arg : {}).translator;
-    this._translatorFunction(translator);
-  }
-
-  SimpleForm.prototype._argumentsValidator = function(args) {
-    if (args[0] == null) {
-      new ST.Error.Arguments('ressource');
-    }
-    if (args[1] == null) {
-      return new ST.Error.Arguments('ressourceFieldName');
-    }
-  };
-
-  SimpleForm.prototype._ressoureDefinition = function(ressource) {
-    if (_.isString(ressource)) {
-      this.base.ressourceName = ressource;
-      return this.base.ressource = false;
-    } else if (_.isObject(ressource)) {
-      if (ressource.modelName != null) {
-        this.base.ressourceName = ressource.modelName;
-        return this.base.ressource = ressource;
-      } else if (ressource.className != null) {
-        this.base.ressourceName = ressource.className;
-        return this.base.ressource = ressource;
-      } else {
-        this.base.ressourceName = ressource;
-        return this.base.ressource = ressource;
-      }
-    }
-  };
-
-  SimpleForm.prototype._inputValueDefinition = function(value) {
-    return this.options.value = value != null ? value : _.isObject(this.base.ressource) ? _.isFunction(this.base.ressource.get) ? this.base.ressource.get(this.base.fieldName) : this.base.ressource[this.base.fieldName] : false;
-  };
-
-  SimpleForm.prototype._collectionDefinition = function(collection) {
-    if (collection != null) {
-      this.options.collection = this.collectionParser(collection);
-      if (this.options.as === 'string') {
-        return this.options.as = 'select';
-      }
-    }
-  };
-
-  SimpleForm.prototype._placeHolderDefinition = function(placeholder) {
-    var translatedPlaceholder;
-    return this.options.placeholder = placeholder === false ? false : placeholder != null ? placeholder : (translatedPlaceholder = this._translatedPlaceholder(), translatedPlaceholder != null ? translatedPlaceholder : false);
-  };
-
-  SimpleForm.prototype._labelDefinition = function(label) {
-    return this.options.label = label === false ? false : label != null ? label : label = this.translatedLabelName();
-  };
-
-  SimpleForm.prototype._hintDefinition = function(hint) {
-    return this.options.hint = hint === false ? false : hint != null ? hint != null ? hint : hint = this.translatedHint() : false;
-  };
-
-  SimpleForm.prototype._wrapperClassDefinition = function(wrapperClass) {
-    var wrapperClassNames;
-    wrapperClassNames = [];
-    wrapperClassNames.push('form-group');
-    if (wrapperClass != null) {
-      wrapperClassNames.push(wrapperClass);
-    }
-    return this.options.wrapperClass = wrapperClassNames.join(" ");
-  };
-
-  SimpleForm.prototype._inputClassDefinition = function(inputClass) {
-    var inputClassNames, inputMapping;
-    inputMapping = INPUT_MAPPING["" + this.options.as];
-    inputClassNames = ["form-" + inputMapping];
-    if (inputMapping === 'input' || inputMapping === 'textarea' || inputMapping === 'select') {
-      inputClassNames.push('form-control');
-    }
-    if (inputClass != null) {
-      inputClassNames.push(inputClass);
-    }
-    return this.options.inputClass = inputClassNames.join(" ");
-  };
-
-  SimpleForm.prototype._includeBlankDefinition = function(includeBlank) {
-    return this.options.includeBlank = (function() {
-      if ((includeBlank != null) && _.isString(includeBlank)) {
-        return includeBlank;
-      } else if (includeBlank === true) {
-        return true;
-      } else if (includeBlank === false) {
-        return false;
-      } else if (_.isString(this.options.as)) {
-        switch (this.options.as) {
-          case 'radiobuttons':
-            return false;
-          case 'checkboxes':
-            return false;
-        }
-      } else {
-        return true;
-      }
-    }).call(this);
-  };
-
-  SimpleForm.prototype.input = function(ressource, fieldName, _arg) {
-    var addonPosition, addonText, as, collection, hint, includeBlank, inputClass, label, model, placeholder, required, translator, type, value, wrapperClass, _ref;
-    _ref = _arg != null ? _arg : {}, model = _ref.model, collection = _ref.collection, value = _ref.value, label = _ref.label, hint = _ref.hint, as = _ref.as, required = _ref.required, placeholder = _ref.placeholder, type = _ref.type, addonText = _ref.addonText, addonPosition = _ref.addonPosition, includeBlank = _ref.includeBlank, inputClass = _ref.inputClass, wrapperClass = _ref.wrapperClass, translator = _ref.translator;
-    this._argumentsValidator(arguments);
-    this.base = {
-      fieldName: fieldName
-    };
-    this.options = {
-      as: as != null ? as : as = 'string',
-      type: type != null ? type : type = 'text',
-      required: required != null ? required : required = false,
-      addonText: addonText != null ? addonText : addonText = false,
-      addonPosition: addonPosition != null ? addonPosition : addonPosition = 'right'
-    };
-    this._ressoureDefinition(ressource);
-    this._translatorFunction(translator);
-    this._includeBlankDefinition(includeBlank);
-    this._inputValueDefinition(value);
-    this._collectionDefinition(collection);
-    this._placeHolderDefinition(placeholder);
-    this._labelDefinition(label);
-    this._hintDefinition(hint);
-    this._wrapperClassDefinition(wrapperClass);
-    this._inputClassDefinition(inputClass);
-    this.options.typeName = INPUT_MAPPING["" + this.options.as];
-    return this["" + this.options.typeName + "Input"]();
-  };
-
-  return SimpleForm;
-
-})();
+/*
+//# sourceMappingURL=simple_form.js.map
+*/

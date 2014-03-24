@@ -2,10 +2,12 @@
 
 <html>
 <head>
+  <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="width=device-width">
   <title>SimpleForm.js</title>
+  <link rel="stylesheet" type="text/css" href="./bower_components/highlightjs/styles/default.css">
   <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="./docs/stylesheets/docs.css">
 </head>
@@ -27,15 +29,37 @@
   Introduction
 </a>
 
-<a class="toc_title" href="#UrlHelper">
-  ST.SimpleForm
+<a class="toc_title" href="#JoB.SimpleForm">
+  JoB.SimpleForm
 </a>
 
 <ul class="toc_section list-unstyled">
-  <li>– <a href="#SimpleForm-input">input</a></li>
+  <li>– <a href="#SimpleForm-basicExample">Basic Example</a></li>
+  <li>– <a href="#SimpleForm-boolean">boolean</a></li>
+  <li>– <a href="#SimpleForm-checkboxes">checkboxes</a></li>
+  <li>– <a href="#SimpleForm-datetime">datetime</a></li>
+  <li>– <a href="#SimpleForm-date">date</a></li>
+  <li>– <a href="#SimpleForm-decimal">decimal</a></li>
+  <li>– <a href="#SimpleForm-email">email</a></li>
+  <li>– <a href="#SimpleForm-file">file</a></li>
+  <li>– <a href="#SimpleForm-float">float</a></li>
+  <li>– <a href="#SimpleForm-hidden">hidden</a></li>
+  <li>– <a href="#SimpleForm-integer">integer</a></li>
+  <li>– <a href="#SimpleForm-select">select</a></li>
+  <li>– <a href="#SimpleForm-string">string</a></li>
+  <li>– <a href="#SimpleForm-tel">tel</a></li>
+  <li>– <a href="#SimpleForm-password">password</a></li>
+  <li>– <a href="#SimpleForm-radiobuttons">radiobuttons</a></li>
+  <li>– <a href="#SimpleForm-range">range</a></li>
+  <li>– <a href="#SimpleForm-search">search</a></li>
+  <li>– <a href="#SimpleForm-text">text</a></li>
+  <li>– <a href="#SimpleForm-textarea">textarea</a></li>
+  <li>– <a href="#SimpleForm-time">time</a></li>
+  <li>– <a href="#SimpleForm-url">url</a></li>
+  <li>– <a href="#SimpleForm-input-mapping">Input mapping</a></li>
 </ul>
 
-<a class="toc_title" href="#changelog">
+<a class="toc_title" href="#Changelog">
   Change Log
 </a>
 
@@ -53,61 +77,364 @@
 <!--
   ////////////////////////////////////
   ////////////////////////////////////
-  SimpleFormJs.Lib.UrlHelper
+  SimpleFormJs.Lib.JoB.SimpleForm
 -->
 
-<h2 id="UrlHelper">ST.SimpleForm Setup</h2>
+<h2 id="JoB.SimpleForm">JoB.SimpleForm Setup</h2>
+
+<p>Make the helper available:</p>
+<pre><code id="simple-form-helper-access" class="highlight javascript">window.simpleForm = new JoB.SimpleForm.Base()
+</code></pre>
+
+<p>Add a Backbone.Model for demonstaration:</p>
+<pre><code id="user-model" class="highlight javascript">window.user = new Backbone.Model({
+  id: 1,
+  name: 'Hans Plastiktüte',
+  email: 'hans@example.com',
+  role_id: 2,
+  newsletter: 1,
+  lang: 'de_DE',
+  bio: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit...',
+  wake_up_time: "08:30",
+  birthday: '1981-11-19',
+  website: 'https://staffomatic.com'
+});
+user.modelName = 'User';
+</code></pre>
 
 <p>
-  Make the helper available:
+  <b class="header">Basic usage is as follow:</b>
 </p>
 
-<pre>
-window.simpleForm = new ST.SimpleForm()
-</pre>
+
+<pre><code class="highlight coffeescript">simpleForm.input(ressource,  fieldName,
+  options = {},
+  inputOptions = {},
+  labelOptions = {},
+  wrapperOptions = {}
+)</code></pre>
+
+<p>
+  <b class="header">ressource</b> &mdash; <code><b>String</b> or <b>Backbone.Model</b></code>
+  <br>
+  Provide a ressource <tt>Name</tt>, <tt>Backbone.Model</tt> or <tt>Hash</tt>
+  <br>
+  <b class="header">fieldName</b> &mdash; <code><b>String</b></code>
+  <br>
+  <code>model.get('<b>fieldName</b>')</code> or <code>{<b>fieldName</b>: 'value'}</code>
+  <br>
+  <b class="header">options</b> &mdash; <code><b>Object</b></code>
+  <br>
+  <tt>as</tt> &mdash; <code><b>String</b> 'string'</code>
+  <br>
+  <tt>collection</tt> &mdash; <code><b>Array</b></code>
+  <br>
+  <tt>placeholder</tt> &mdash; <code><b>String</b></code>
+  <br>
+  <tt>label</tt> &mdash; <code><b>String</b></code>
+  <br>
+  <tt>hint</tt> &mdash; <code><b>String</b></code>
+  <br>
+  <b class="header">inputOptions</b> &mdash; <code><b>Object</b> {}</code>
+  <br>
+  <b class="header">labelOptions</b> &mdash; <code><b>Object</b> {}</code>
+  <br>
+  <b class="header">wrapperOptions</b> &mdash; <code><b>Object</b> {class: 'form-group'}</code>
+  <br>
+  Html-Options for the wrapper element.
+</p>
+
+
+
+<p id="SimpleForm-basicExample">
+  <b class="header">Let's see a complete Form:</b>
+</p>
+
+<pre><code class="runnable highlight javascript">a = [
+simpleForm.input(user, 'name', {placeholder: 'User Name'}),
+simpleForm.input(user, 'email', {placeholder: 'User E-Mail'}),
+simpleForm.input(user, 'avatar', {label: 'Upload avatar', as: 'file', hint: 'Select selfie'}),
+simpleForm.input(user, 'role_id', {label: 'Role', collection: [[1, 'Admin'], [2, 'Manager']]}),
+simpleForm.input(user, 'newsletter', {label: 'Subscribe to Newsletter', as: 'boolean'}),
+simpleForm.button('Submit')
+].join("");
+</code></pre>
+
+<h2 id="Examples">Examples</h2>
 
 <!-- EXAMPLE -->
-<p id="SimpleForm-input">
-  <b class="header">input</b><code>helper.input(ressource, fieldName, [options])</code>
+<p id="SimpleForm-boolean">
+  <b class="header">boolean</b><code>simpleForm.input(ressource, fieldName, [options]);</code>
   <br>
-  Creates a <b>button</b> element that defines a submit button.
 </p>
-<pre class="runnable">
-simpleForm.input('users', 'name', {placeholder: 'User Name'});
-</pre>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'newsletter', {
+    label: 'Subscribe to Newsletter',
+    as: 'boolean'
+  })</code></pre>
+
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-checkboxes">
+  <b class="header">checkboxes</b><code>simpleForm.input(ressource, fieldName, [options]);</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'role_id', {
+  as: 'checkboxes', collection: roles
+});</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-datetime">
+  <b class="header">datetime</b><code>not yet implemened</code>
+</p>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-date">
+  <b class="header">date</b><code>simpleForm.input(ressource, fieldName, [options]);</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'birthday', {
+  as: 'date'
+});</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-decimal">
+  <b class="header">decimal</b><code>not yet implemened</code>
+</p>
+
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-email">
+  <b class="header">email</b><code>input(ressource, fieldName, {as: 'email'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'email', {as: 'email'})</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-file">
+  <b class="header">file</b><code>input(ressource, fieldName, {as: 'file'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'avatar',
+  {as: 'file'}, {multiple: true}
+)</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-float">
+  <b class="header">float</b><code>not yet implemened</code>
+</p>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-hidden">
+  <b class="header">file</b><code>input(ressource, fieldName, {as: 'hidden'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'lang',{as: 'hidden'})</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-integer">
+  <b class="header">integer</b><code>not yet implemened</code>
+</p>
+
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-select">
+  <b class="header">select</b><code>input(ressource, fieldName, {collection: roles})</code>
+  <br>
+  Providing a valid collection will result in a <b>select</b> tag.
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'role_id',
+  {collection: roles}
+)</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-string">
+  <b class="header">string</b><code>input(ressource, fieldName)</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'name')</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-tel">
+  <b class="header">tel</b><code>input(ressource, fieldName, {as: 'tel'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'mobile', {as: 'tel'})</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-password">
+  <b class="header">password</b><code>input(ressource, fieldName, {as: 'password'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'password', {as: 'password'})</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-radiobuttons">
+  <b class="header">radiobuttons</b><code>input(ressource, fieldName, {as: 'radiobuttons'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'role_id',
+  {as: 'radiobuttons', collection: roles}
+)</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-range">
+  <b class="header">range</b><code>input(ressource, fieldName, {as: 'range'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'range',
+  {as: 'range'}
+)</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-search">
+  <b class="header">search</b><code>input(ressource, fieldName, {as: 'search'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input('search', 'user_name',
+  {as: 'search'}
+)</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-text">
+  <b class="header">text</b><code>input(ressource, fieldName, {as: 'text'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'bio',
+  {as: 'text'}
+)</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-textarea">
+  <b class="header">textarea</b><code>alias for <b>text</b></code>
+</p>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-time">
+  <b class="header">time</b><code>input(ressource, fieldName, {as: 'time'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'wake_up_time',
+  {as: 'time'}
+)</code></pre>
+
+<!-- EXAMPLE -->
+<p id="SimpleForm-url">
+  <b class="header">url</b><code>input(ressource, fieldName, {as: 'url'})</code>
+  <br>
+</p>
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'website',
+  {as: 'url'}
+)</code></pre>
+
+<!--
+##############################
+##############################
+#### INPUT MAPPING
+-->
+
+<p id="SimpleForm-input-mapping">
+  <b class="header">Input Mapping</b>
+</p>
+<pre><code class="highlight coffeescript">INPUT_MAPPING =
+  boolean: 'checkBoxTag'
+  checkboxes: 'checkBoxTag'
+  datetime: 'datetimeFieldTag'
+  date: 'dateFieldTag'
+  decimal: 'input'
+  email: 'emailFieldTag'
+  file:  'fileFieldTag'
+  float: 'input'
+  hidden:  'hiddenFieldTag'
+  integer: 'input'
+  select: 'selectTag'
+  string:  'textFieldTag'
+  tel: 'telephoneFieldTag'
+  password:  'passwordFieldTag'
+  radiobuttons: 'radioButtonTag'
+  range: 'rangeFieldTag'
+  search:  'searchFieldTag'
+  text: 'textAreaTag'
+  textarea: 'textAreaTag'
+  time: 'timeFieldTag'
+  url: 'urlFieldTag'</code></pre>
+
+<!--
+########################
+########################
+CHANGELOG
+#########
+-->
+<h2 id="Changelog">Change Log</h2>
+<p id="0.0.1">
+  <b class="header">0.0.1</b> &mdash; <small><i>March 24, 2014</i></small> &mdash;
+  <!--
+  <a href="https://github.com/jashkenas/underscore/compare/1.5.2...0.0.1">Diff</a>
+  &mdash;
+  <a href="http://htmlpreview.github.io/?https://raw.github.com/jashkenas/underscore/0.0.1/index.html">Docs</a><br />
+  -->
+  <ul>
+    <li>Pre-Release of of SimpleForm.js</li>
+  </ul>
+</p>
+
 
     </div>
   </div>
 </div>
 
+
+
 <!-- JAVASCRIPT -->
 <script src="./dist/dependencies.js"></script>
 <script src="./dist/simple_form.js"></script>
+<script src="./bower_components/highlightjs/highlight.pack.js"></script>
 
 <script>
   // Set up the "play" buttons for each runnable code example.
   $(function() {
-    window.simpleForm = new ST.SimpleForm()
+    // Base access to JoB.SimpleForm.Base
+    $helper = $("#simple-form-helper-access")
+    eval($helper.html());
+
+    // Base User Model
+    $user = $("#user-model")
+    eval($user.html());
+
+    // Sample Collection
+    window.roles = [[1, 'Amin'], [2, 'Manager'], [3, 'Staff']];
+
+    $('pre code.highlight').each(function(i, e) {
+      $el = $(this)
+      code = $el.html()
+      $el.attr('data-code', code)
+      hljs.highlightBlock(e)
+    });
 
     $('.runnable').each(function() {
       var code = this;
       var button   = '<div class="run" title="Run"></div>';
       var output   = '<div class="output">output</div>';
-      var htmlText = '<div class="html-text">html-text</div>';
+      var htmlText = '<div class="html-text"></div>';
       $(button).insertBefore(code).bind('click', function(){
-
-        html = eval($(code).html());
+        pureCode =  $(code).data('code')
+        html = eval(pureCode);
         if (html) {
-          string = $("<div/>").html(html)
+          // Display parsed html
+          string = $("<form/>").html(html)
           $(output)
-            .html('<strong>Result:</strong><br/>')
+            .html('<h5>Result:</h5>')
               .append(string)
                 .insertAfter(code)
+                  .append('<h5>SerializeArray:</h5>')
+                    .append(JSON.stringify(string.serializeArray()))
+
+          // Display code
           string = $("<div/>").text(html)
           $(htmlText)
-            .html('<strong>Code:</strong><br/>')
-              .append(string)
+            .html('<h5>Html:</h5>')
+              .append("<pre><code class='preview'>" + hljs.highlightAuto(html).value + "</code></pre>")
                 .insertAfter(code)
+
         };
       });
     });

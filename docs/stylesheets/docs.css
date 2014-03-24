@@ -9,6 +9,59 @@ body {
 div#content {
 }
 
+.html-text pre{
+  margin: 0 -3%;
+}
+
+pre{
+  padding: 4px;
+  border-radius: 0px;
+  overflow: visible;
+}
+
+pre code{
+  white-space: pre;
+  word-break: normal;
+  word-wrap: normal;
+  overflow: scroll;
+  border-radius: 0px;
+}
+
+pre code.preview{
+  white-space:pre;
+  white-space:pre-wrap;
+  word-break:break-all;
+  word-wrap:break-word;
+}
+
+pre code.runnable{
+  margin-bottom: 10px;
+}
+
+b.header {
+  font-size: 18px;
+  line-height: 35px;
+}
+
+.html-text h5, .output h5{
+  padding-top: 10px;
+  padding-bottom: 6px;
+  display: block;
+  border-bottom:1px solid #94ACE0;
+}
+
+div#content ul.options-list{
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+div#content ul.options-list li{
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
 div#sidebar {
   background: #fff;
   position: fixed;

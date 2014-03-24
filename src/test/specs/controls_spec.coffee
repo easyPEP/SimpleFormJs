@@ -6,7 +6,7 @@ define ['jquery', 'fixtures'], ($, fixtures) ->
     collection = ['male', 'female']
 
     beforeEach ->
-      simpleForm = new ST.SimpleForm()
+      simpleForm = new JoB.SimpleForm.Base()
 
     afterEach ->
       fixtures.cleanUp()
