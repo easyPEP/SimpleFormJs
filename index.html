@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width">
   <title>SimpleForm.js</title>
   <link rel="stylesheet" type="text/css" href="./docs/stylesheets/highlight.css">
-  <link rel="stylesheet" type="text/css" href="./docs/stylesheets/bootstrap.css">
+  <!-- <link rel="stylesheet" type="text/css" href="./docs/stylesheets/bootstrap.css"> -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="./docs/stylesheets/docs.css">
 </head>
 
@@ -29,12 +30,24 @@
   Introduction
 </a>
 
-<a class="toc_title" href="#JoB.SimpleForm">
-  JoB.SimpleForm
+<a class="toc_title" href="#SimpleForm-examples">
+  Examples
 </a>
 
 <ul class="toc_section list-unstyled">
-  <li>– <a href="#SimpleForm-basicExample">Basic Example</a></li>
+  <li>– <a href="#SimpleForm-basicExample">Basic example</a></li>
+  <li>– <a href="#SimpleForm-input-options">Input options</a></li>
+  <li>– <a href="#SimpleForm-validation-state">Validation states</a></li>
+  <li>– <a href="#SimpleForm-input-with-icons">Input with icons</a></li>
+  <li>– <a href="#SimpleForm-input-help-text-and-placeholders">Help text and placeholders</a></li>
+  <li>– <a href="#SimpleForm-input-groups">Input groups</a></li>
+</ul>
+
+<a class="toc_title" href="#JoB.SimpleForm.input">
+  JoB.SimpleForm.input
+</a>
+
+<ul class="toc_section list-unstyled">
   <li>– <a href="#SimpleForm-boolean">boolean</a></li>
   <li>– <a href="#SimpleForm-checkboxes">checkboxes</a></li>
   <li>– <a href="#SimpleForm-datetime">datetime</a></li>
@@ -64,6 +77,7 @@
 </a>
 
     </div>
+
     <div class="col-xs-12 col-sm-8 col-md-8 col-sm-offset-3 col-md-offset-3" id="content">
 
 <h1 class="project-name"> - SimpleForm<small>.js</small> - </h1>
@@ -146,8 +160,12 @@ user.modelName = 'User';
 
 
 
+<h2 id="SimpleForm-examples">Examples</h2>
+
 <p id="SimpleForm-basicExample">
-  <b class="header">Let's see a complete Form:</b>
+  <b class="header">Basic example</b>
+  <br>
+  A complete form example with <tt>placeholders</tt>, <tt>hints</tt> and more.
 </p>
 
 <pre><code class="runnable highlight javascript">a = [
@@ -160,7 +178,62 @@ simpleForm.button('Submit')
 ].join("");
 </code></pre>
 
-<h2 id="Examples">Examples</h2>
+<p id="SimpleForm-input-options">
+  <b class="header">String input with a varity of options</b>
+</p>
+
+<pre><code class="runnable highlight javascript">simpleForm.input("User", 'name',
+  {label: 'Username', placeholder: 'Please provide a username'}, // options
+  {disabled: 'disabled', class: 'extra-input-class', css: {width: '50%'}}, // inputOptions
+  {class: 'extra-label-class'}, // labelOptions
+  {class: 'extra-wrapper-class'} // wrapperOptions
+)</code></pre>
+
+<p id="SimpleForm-validation-state">
+  <b class="header">Validation states</b>
+</p>
+
+<pre><code class="runnable highlight javascript">simpleForm.input(user, 'name',
+  {label: 'Username', placeholder: 'Please provide a username'},
+  {}, // inputOptions
+  {}, // labelOptions
+  {class: 'has-success'}
+)</code></pre>
+
+<p id="SimpleForm-input-with-icons">
+  <b class="header">Input with icons</b>
+</p>
+
+<pre><code class="runnable highlight javascript">simpleForm.input("User", 'name',
+  {icons: 'glyphicon glyphicon-ok form-control-feedback'},
+  {},
+  {},
+  {class: 'has-success has-feedback'}
+)</code></pre>
+
+<p id="SimpleForm-input-help-text-and-placeholders">
+  <b class="header">Help text and placeholders</b>
+</p>
+
+<pre><code class="runnable highlight javascript">simpleForm.input("User", 'name',
+  {placeholder: 'Your Username', hint: 'You should pick a uniq username'}
+)</code></pre>
+
+<p id="SimpleForm-input-groups">
+  <b class="header">Input groups</b>
+</p>
+
+<pre><code class="runnable highlight javascript">
+simpleForm.input("User", 'name',
+  {addonText: '@'}
+)</code></pre>
+
+<pre><code class="runnable highlight javascript">
+simpleForm.input("User", 'name',
+  {addonText: '@', addonPosition: 'left'}
+)</code></pre>
+
+<h2 id="JoB.SimpleForm.input">JoB.SimpleForm.input</h2>
 
 <!-- EXAMPLE -->
 <p id="SimpleForm-boolean">
@@ -365,10 +438,24 @@ CHANGELOG
 #########
 -->
 <h2 id="Changelog">Change Log</h2>
+<p id="0.0.2">
+  <b class="header">0.0.2</b> &mdash; <small><i>March 25, 2014</i></small> &mdash;
+  <a href="https://github.com/easyPEP/SimpleFormJs/compare/0.0.1...0.0.2">Diff</a>
+  &mdash;
+  <a href="http://easypep.github.io/SimpleFormJs/?https://raw.github.com/easyPEP/SimpleFormJs/0.0.2/index.html">Docs</a><br />
+  <ul>
+    <li>
+      Added examples to Documentation for <tt>inputOptions</tt>, <tt>Validation states</tt>,
+      <tt>Input with icons</tt>, <tt>Help text and placeholders</tt>, <tt>Input groups</tt>
+    </li>
+    <li>Added <tt>input groups</tt> support</li>
+  </ul>
+</p>
+
 <p id="0.0.1">
   <b class="header">0.0.1</b> &mdash; <small><i>March 24, 2014</i></small> &mdash;
   <!--
-  <a href="https://github.com/jashkenas/underscore/compare/1.5.2...0.0.1">Diff</a>
+  <a href="https://github.com/easyPEP/SimpleFormJs/compare/1.5.2...0.0.1">Diff</a>
   &mdash;
   <a href="http://htmlpreview.github.io/?https://raw.github.com/jashkenas/underscore/0.0.1/index.html">Docs</a><br />
   -->
