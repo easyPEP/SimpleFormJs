@@ -178,6 +178,7 @@ JoB.SimpleForm.Base = (function() {
       content = this.inputOptions.value;
       delete this.inputOptions.value;
       this.inputOptions['class'] += " form-control";
+      this.labelOptions['class'] += " control-label";
       inputHtml = this.tagHelper.textAreaTag(this.base.ressourceName, this.base.fieldName, content, this.inputOptions);
       inputWithWrapper = this.wrapperHelper["default"](inputHtml);
     } else {
@@ -187,6 +188,7 @@ JoB.SimpleForm.Base = (function() {
         this.options.label = false;
       } else {
         this.inputOptions['class'] += " form-control";
+        this.labelOptions['class'] += " control-label";
       }
       inputHtml = this.tagHelper["" + (this._inputType())](this.base.ressourceName, this.base.fieldName, this.inputOptions);
       inputWithWrapper = this.wrapperHelper["default"](inputHtml);
@@ -219,7 +221,6 @@ JoB.SimpleForm.Base = (function() {
       label: true,
       value: true,
       required: false,
-      addonText: false,
       addonPosition: 'right',
       includeBlank: true
     });
@@ -228,9 +229,11 @@ JoB.SimpleForm.Base = (function() {
       value: this._value(),
       placeholder: this._placeholder()
     });
-    this.labelOptions = _.defaults(labelOptions, {});
+    this.labelOptions = _.defaults(labelOptions, {
+      "class": ''
+    });
     this.wrapperOptions = _.defaults(wrapperOptions, {
-      "class": 'form-group'
+      "class": ''
     });
     this.wrapperHelper = new JoB.SimpleForm.WrapperHelper(this.base, this.options, this.labelOptions, this.wrapperOptions);
     return this.inputWithWrapper();
@@ -323,10 +326,11 @@ JoB.SimpleForm.WrapperHelper = (function() {
     this.simpleFormOptions = simpleFormOptions;
     this.labelOptions = labelOptions;
     this.options = _.defaults(wrapperOptions, {
-      "class": 'form-group',
+      "class": '',
       addonText: false,
       addonPosition: 'left'
     });
+    this.options['class'] += " form-group";
     this.formTagHelper = new JoB.Form.TagHelper();
     this.tagHelper = new JoB.Lib.Tag();
     this.translationHelper = new JoB.SimpleForm.TranslationHelper(this.base);
@@ -363,29 +367,43 @@ JoB.SimpleForm.WrapperHelper = (function() {
     });
   };
 
-  WrapperHelper.prototype["default"] = function(inputHtml) {
+  WrapperHelper.prototype.template = function(wrapperClass, label, input, icon, hint, addonText, addonPosition) {
     var html;
-    html = "";
-    html += "<div class='" + this.options["class"] + "'>";
-    if (this.options.addonText === false) {
-      html += this._label(this.simpleFormOptions.label);
-      html += inputHtml;
-    } else {
-      html += this._label(this.simpleFormOptions.label);
+    html = "<div class='" + wrapperClass + "'>";
+    if (label) {
+      html += label;
+    }
+    if (addonText && addonPosition) {
       html += "<div class='input-group'>";
-      if (this.options.addonPosition === 'left') {
-        html += this.inputHtmlAddon(this.options.addonText);
-        html += inputHtml;
-      } else {
-        html += inputHtml;
-        html += this._addon(this.options.addonText);
+      if (addonPosition === 'left') {
+        html += "<span class='input-group-addon'>" + addonText + "</span>";
       }
-      html += '</div>';
+      if (input) {
+        html += input;
+      }
+      if (addonPosition === 'right') {
+        html += "<span class='input-group-addon'>" + addonText + "</span>";
+      }
+      html += "</div>";
+    } else {
+      if (input) {
+        html += input;
+      }
+      if (icon) {
+        html += "<span class='" + icon + "'></span>";
+      }
+      if (hint) {
+        html += "<span class='help-block'>" + hint + "</span>";
+      }
     }
-    if (_.isEmpty("" + this.simpleFormOptions.hint) === !true) {
-      html += this._hint(this.simpleFormOptions.hint);
-    }
-    html += '</div>';
+    html += "</div>";
+    return html;
+  };
+
+  WrapperHelper.prototype["default"] = function(inputHtml) {
+    var html, label;
+    label = this._label(this.simpleFormOptions.label);
+    html = this.template(this.options["class"], label, inputHtml, this.simpleFormOptions.icons, this.simpleFormOptions.hint, this.simpleFormOptions.addonText, this.simpleFormOptions.addonPosition);
     return html;
   };
 
