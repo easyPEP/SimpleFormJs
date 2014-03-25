@@ -16,10 +16,11 @@ class JoB.SimpleForm.WrapperHelper
     @options = _.defaults(
       wrapperOptions,
       {
-        class: 'form-group',
+        class: '',
         addonText: false,
         addonPosition: 'left'
       })
+    @options['class'] += " form-group"
 
     # initiate helpers
     @formTagHelper = new JoB.Form.TagHelper()
@@ -50,27 +51,38 @@ class JoB.SimpleForm.WrapperHelper
   _addon: (addonText) ->
     @tagHelper.contentTag('span', addonText, {class: 'input-group-addon'})
 
+  template: (wrapperClass, label, input, icon, hint, addonText, addonPosition) ->
+    html =  "<div class='#{wrapperClass}'>"
+    html += label if label
+    if addonText && addonPosition
+      html += "<div class='input-group'>"
+      if(addonPosition is 'left')
+        html += "<span class='input-group-addon'>#{addonText}</span>"
+      if(input)
+        html += input
+      if addonPosition is 'right'
+        html += "<span class='input-group-addon'>#{addonText}</span>"
+      html += "</div>"
+    else
+      if(input)
+        html += input
+      if(icon)
+        html += "<span class='#{icon}'></span>"
+      if(hint)
+        html += "<span class='help-block'>#{hint}</span>"
+    html += "</div>"
+
+    html
+
   # Base Wrapper
   default: (inputHtml) ->
-    html = ""
-    # input-group
-    html += "<div class='#{@options.class}'>"
-    if @options.addonText is false
-      html +=   @_label(@simpleFormOptions.label)
-      html +=   inputHtml
-    else
-      html += @_label(@simpleFormOptions.label)
-      html += "<div class='input-group'>"
-      if @options.addonPosition is 'left'
-        html += @inputHtmlAddon(@options.addonText)
-        html += inputHtml
-      else
-        html += inputHtml
-        html += @_addon(@options.addonText)
-      html += '</div>'
-    html += @_hint(@simpleFormOptions.hint) if _.isEmpty("#{@simpleFormOptions.hint}") is not true
-    html += '</div>'
+    label = @_label(@simpleFormOptions.label)
+    html = @template(
+      @options.class, label, inputHtml, @simpleFormOptions.icons, @simpleFormOptions.hint,
+      @simpleFormOptions.addonText, @simpleFormOptions.addonPosition
+    )
     html
+
 
   # Special Checkbox
   checkbox: (inputTag, labelText) ->

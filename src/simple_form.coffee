@@ -184,6 +184,7 @@ class JoB.SimpleForm.Base
     else if inputType is INPUT_MAPPING['text'] or inputType is INPUT_MAPPING['textarea']
       content = @inputOptions.value; delete @inputOptions.value
       @inputOptions['class'] += " form-control"
+      @labelOptions['class'] += " control-label"
       inputHtml = @tagHelper.textAreaTag(
         @base.ressourceName,
         @base.fieldName,
@@ -200,6 +201,7 @@ class JoB.SimpleForm.Base
         @options.label = false
       else
         @inputOptions['class'] += " form-control"
+        @labelOptions['class'] += " control-label"
       inputHtml = @tagHelper["#{@_inputType()}"](
         @base.ressourceName,
         @base.fieldName,
@@ -229,7 +231,6 @@ class JoB.SimpleForm.Base
         label: true,
         value: true,
         required: false,
-        addonText: false,
         addonPosition: 'right',
         includeBlank: true
       })
@@ -241,12 +242,15 @@ class JoB.SimpleForm.Base
         value: @_value(),
         placeholder: @_placeholder()
       })
-    @labelOptions = _.defaults(labelOptions, {})
+    @labelOptions = _.defaults(labelOptions,
+      {
+        class: ''
+      })
 
     @wrapperOptions = _.defaults(
       wrapperOptions,
       {
-        class: 'form-group'
+        class: ''
       })
     # @wrapperOptions.class = "form-group #{@wrapperOptions.class}"
     @wrapperHelper = new JoB.SimpleForm.WrapperHelper(@base, @options, @labelOptions, @wrapperOptions)
